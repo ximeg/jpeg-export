@@ -95,15 +95,14 @@ if args.scale or args.resize or args.quality:
 	for root, subFolders, files in os.walk(args.src[0]):
 		for fname in files:
 			if re.match(".+\.jpg$", fname, re.I):
-				if len(procs) < thr_max:
-					p = Process(target=process_photo, args=(root, fname,))
-					p.start()
-					procs.append(p)
-				else:
-					while len(procs) >= thr_max:
-						for p in procs:
-							if not p.is_alive():
-								procs.remove(p)
+				while len(procs) >= thr_max:
+					sleep(0.005)
+					for p in procs:
+						if not p.is_alive():
+							procs.remove(p)
+				p = Process(target=process_photo, args=(root, fname,))
+				p.start()
+				procs.append(p)
 
 # If not, just copy them (hard-link if possible)
 else:
